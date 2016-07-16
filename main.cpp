@@ -216,8 +216,7 @@ int main()
 			DWORD CurrentWeaponEntity = CSMemory->Read<DWORD>(CSMemory->GetClientBase() + m_dwEntityList + (CurrentWeaponIndex - 1) * 0x10);
 			int CurrentWeaponId = CSMemory->Read<int>(CurrentWeaponEntity + m_iItemDefinitionIndex);
 			int MyXuid = CSMemory->Read<int>(CurrentWeaponEntity + m_OriginalOwnerXuidLow);
-			CSMemory->Write<int>(CurrentWeaponEntity + m_iItemIDLow, 2048); // Hehe
-			CSMemory->Write<int>(CurrentWeaponEntity + m_iItemIDHigh, 0);
+			CSMemory->Write<int>(CurrentWeaponEntity + m_iItemIDHigh, -1); //When iItemIDHigh is set to non zero value, fallback values will be used.
 			if (IniParser->SectionExists(std::to_string(CurrentWeaponId).c_str()))
 			{
 				CSMemory->Write<int>(CurrentWeaponEntity + m_nFallbackPaintKit, IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "PaintKit"));
@@ -246,7 +245,7 @@ int main()
 			std::this_thread::sleep_for(std::chrono::milliseconds(250));
 		}
 
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+	//	std::this_thread::sleep_for(std::chrono::seconds(1)); You dont need this sleep
 	}
 
 	// Clean le stuffz out
