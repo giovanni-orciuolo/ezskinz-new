@@ -210,21 +210,29 @@ int main()
 		DWORD LocalPlayer = CSMemory->Read<DWORD>(CSMemory->GetClientBase() + m_dwLocalPlayer);
 
 		// Thanks a lot WasserEsser for cleaning my mind about m_hMyWeapons... you are my hero :^)
-		for (int i=0; i<48; i++)
+		for (int i = 0; i < 3; i++)
 		{
+			struct Fallback{
+				int FallbackPaintKit;
+				int FallbackSeed;
+				float FallbackWear;
+				int FallbackStattrak;
+			}bigmeme;
 			DWORD CurrentWeaponIndex = CSMemory->Read<DWORD>(LocalPlayer + m_hMyWeapons + ((i - 1) * 0x4)) & 0xFFF;
 			DWORD CurrentWeaponEntity = CSMemory->Read<DWORD>(CSMemory->GetClientBase() + m_dwEntityList + (CurrentWeaponIndex - 1) * 0x10);
 			int CurrentWeaponId = CSMemory->Read<int>(CurrentWeaponEntity + m_iItemDefinitionIndex);
 			int MyXuid = CSMemory->Read<int>(CurrentWeaponEntity + m_OriginalOwnerXuidLow);
-			CSMemory->Write<int>(CurrentWeaponEntity + m_iItemIDHigh, -1); //When iItemIDHigh is set to non zero value, fallback values will be used.
+			
 			if (IniParser->SectionExists(std::to_string(CurrentWeaponId).c_str()))
 			{
-				CSMemory->Write<int>(CurrentWeaponEntity + m_nFallbackPaintKit, IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "PaintKit"));
-				CSMemory->Write<int>(CurrentWeaponEntity + m_nFallbackSeed, IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "Seed"));
-				CSMemory->Write<int>(CurrentWeaponEntity + m_nFallbackStatTrak, IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "StatTrak"));
-				CSMemory->Write<int>(CurrentWeaponEntity + m_iEntityQuality, IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "EntityQuality"));
+				bigmeme.FallbackPaintKit = IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "PaintKit");
+				bigmeme.FallbackSeed = IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "Seed");
+				bigmeme.FallbackWear = IniParser->ReadFloat(std::to_string(CurrentWeaponId).c_str(), "Wear");
+				bigmeme.FallbackStattrak = IniParser->ReadInt(std::to_string(CurrentWeaponId).c_str(), "StatTrak");
+				
+				CSMemory->Write<int>(CurrentWeaponEntity + m_iItemIDHigh, -1);
+				CSMemory->Write<FallBack>(CurrentWeaponEntity + m_nFallbackPaintKit, bigmeme);
 				CSMemory->WriteArray<char>(CurrentWeaponEntity + m_szCustomName, IniParser->ReadString(std::to_string(CurrentWeaponId).c_str(), "CustomName").c_str(), IniParser->ReadString(std::to_string(CurrentWeaponId).c_str(), "CustomName").length());
-				CSMemory->Write<float>(CurrentWeaponEntity + m_flFallbackWear, IniParser->ReadFloat(std::to_string(CurrentWeaponId).c_str(), "Wear"));
 			}
 			CSMemory->Write<int>(CurrentWeaponEntity + m_iAccountID, MyXuid);
 		}
