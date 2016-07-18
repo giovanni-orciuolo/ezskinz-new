@@ -210,7 +210,7 @@ int main()
 		DWORD LocalPlayer = CSMemory->Read<DWORD>(CSMemory->GetClientBase() + m_dwLocalPlayer);
 
 		// Thanks a lot WasserEsser for cleaning my mind about m_hMyWeapons... you are my hero :^)
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			struct Fallback{
 				int FallbackPaintKit;
