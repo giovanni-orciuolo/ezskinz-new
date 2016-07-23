@@ -4,6 +4,7 @@
 #include "Memory.h"
 #include "PatternScan.h"
 #include "IniParser.h"
+#define MAX_WEAPONS 64
 
 using std::hex;
 using std::dec;
@@ -210,7 +211,7 @@ int main()
 		DWORD LocalPlayer = CSMemory->Read<DWORD>(CSMemory->GetClientBase() + m_dwLocalPlayer);
 
 		// Thanks a lot WasserEsser for cleaning my mind about m_hMyWeapons... you are my hero :^)
-		for (int i=0; i<48; i++)
+		for (int i=0; i<MAX_WEAPONS; i++)
 		{
 			DWORD CurrentWeaponIndex = CSMemory->Read<DWORD>(LocalPlayer + m_hMyWeapons + ((i - 1) * 0x4)) & 0xFFF;
 			DWORD CurrentWeaponEntity = CSMemory->Read<DWORD>(CSMemory->GetClientBase() + m_dwEntityList + (CurrentWeaponIndex - 1) * 0x10);
